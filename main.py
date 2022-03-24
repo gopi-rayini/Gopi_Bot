@@ -73,12 +73,12 @@ async def on_ready():
 @client.event
 async def on_message(message):
     msg=message.content
-    prefix = db["prefix"] 
+    prefix = db["prefix"]
 
     if message.author == client.user:
         return
     
-    await message.channel.send('Hey <@'+ message.author.id +',> you sent a message!')
+    await message.channel.send('Hey <@'+ (str)(message.author.id) +'> you sent a message!')
 
     if message.content.startswith(prefix+'prefix'):
         char = msg.split(prefix+'prefix ',1)[1]
