@@ -78,7 +78,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    await message.channel.send('Hey ${message.author}, you sent a message!')
+    await message.channel.send('Hey <@'+ message.author.id +',> you sent a message!')
 
     if message.content.startswith(prefix+'prefix'):
         char = msg.split(prefix+'prefix ',1)[1]
