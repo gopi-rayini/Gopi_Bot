@@ -11,6 +11,7 @@ intents.members = True
 client = discord.Client(intents=intents)
 guild=client.guilds
 prefix='$'
+userTagList = {}
 
 def get_quote():
     response = requests.get("https://zenquotes.io/api/random")
@@ -68,16 +69,22 @@ def checkName(msg):
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game('gently ;)'))
+    userTagList = db["userTagsList"]
+    prefix = db["prefix"]
     print('We have logged in as {0.user}'.format(client))
 
 @client.event
 async def on_message(message):
     msg=message.content
-    prefix = db["prefix"]
-
     if message.author == client.user:
         return
     
+    if(userTagList.__contains__(message.author.id)):
+        db[(str)(message.author.id)] += 1
+    else:
+        userTagList.add(message.author.id)
+        db[(str)(message.author.id)] = 0
+
     await message.channel.send('Hey <@'+ (str)(message.author.id) +'> you sent a message!')
 
     if message.content.startswith(prefix+'prefix'):
