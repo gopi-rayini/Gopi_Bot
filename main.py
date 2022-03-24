@@ -11,7 +11,6 @@ intents.members = True
 client = discord.Client(intents=intents)
 guild=client.guilds
 prefix='$'
-commands = {}
 
 def get_quote():
     response = requests.get("https://zenquotes.io/api/random")
@@ -74,11 +73,12 @@ async def on_ready():
 @client.event
 async def on_message(message):
     msg=message.content
-    prefix = db["prefix"]
+    prefix = db["prefix"] 
 
-    await message.channel.send(message.author) 
     if message.author == client.user:
         return
+    
+    await message.channel.send('Hey ${message.author}, you sent a message!')
 
     if message.content.startswith(prefix+'prefix'):
         char = msg.split(prefix+'prefix ',1)[1]
@@ -111,9 +111,7 @@ async def on_message(message):
         if (msg=='joke'):
             joke = get_joke()
             await message.channel.send(joke)
-        
-        if(msg=='cmdadd'):
-            commands.add()
+    
 
 keep_alive()
 client.run(os.getenv('TOKEN'))
