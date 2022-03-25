@@ -34,6 +34,15 @@ def get_joke():
         joke = j['joke']
     return joke
 
+def get_weather():
+    r = requests.get("https://www.7timer.info/bin/astro.php?lon=-74.54&lat=40.36&ac=0&unit=imperial&output=json&tzshift=0")
+    j = json.loads(r.text)
+    series = j['dataseries']
+    weather = []
+    for x in series:
+        weather.append(series['temp2m'])
+    return weather
+
 def update_prefix(char):
     db["prefix"] = char
 
@@ -72,7 +81,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    userTagList = db["userTagsList"]
     prefix = db["prefix"]
     msg=message.content
     if message.author == client.user:
@@ -115,6 +123,11 @@ async def on_message(message):
         if (msg=='joke'):
           joke = get_joke()
           await message.channel.send(joke)
+        
+        if(msg=='weather'):
+            weather = get_weather
+            await message.channel.send(weather)
+
         if (msg=='msg'):
           await message.channel.send('Hey <@'+ (str)(message.author.id) + '>, you have sent ' + (str)(db[(str)(message.author.id)]) + ' messages!')
     
