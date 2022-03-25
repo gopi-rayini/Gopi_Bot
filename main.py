@@ -11,7 +11,6 @@ intents.members = True
 client = discord.Client(intents=intents)
 guild=client.guilds
 prefix='$'
-userTagList = {}
 
 def get_quote():
     response = requests.get("https://zenquotes.io/api/random")
@@ -69,24 +68,22 @@ def checkName(msg):
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game('gently ;)'))
-    userTagList = db["userTagsList"]
-    prefix = db["prefix"]
     print('We have logged in as {0.user}'.format(client))
 
 @client.event
 async def on_message(message):
+    userTagList = db["userTagsList"]
+    prefix = db["prefix"]
     msg=message.content
     if message.author == client.user:
         return
-    
-    if(userTagList.__contains__(message.author.id)):
+    #User Message Counter
+    try:
         db[(str)(message.author.id)] += 1
-    else:
-        userTagList.add(message.author.id)
+    except:
         db[(str)(message.author.id)] = 0
-
-    await message.channel.send('Hey <@'+ (str)(message.author.id) +'> you sent a message!')
-
+      
+    #Prefix Set
     if message.content.startswith(prefix+'prefix'):
         char = msg.split(prefix+'prefix ',1)[1]
         update_prefix(char)
@@ -98,26 +95,28 @@ async def on_message(message):
         msg = message.content.replace(prefix, '', 1)
 
         if (msg=='help'):            
-            await message.channel.send("**Commands are:**")
-            await message.channel.send("*dq* - Daily Quotes")
-            await message.channel.send("*af* - Anime Quotes/Facts")
-            await message.channel.send("*joke* - Jokes")
-            await message.channel.send("*joe, raven, gopi, xinyi, justin, or ariana* - Misc")
+          await message.channel.send("**Commands are:**")
+          await message.channel.send("*dq* - Daily Quotes")
+          await message.channel.send("*af* - Anime Quotes/Facts")
+          await message.channel.send("*joke* - Jokes")
+          await message.channel.send("*joe, raven, gopi, xinyi, justin, or ariana* - Misc")
 
         if(checkName(msg)!="NA"):
-            await message.channel.send(checkName(msg))
+          await message.channel.send(checkName(msg))
 
         if (msg=='dq' or msg=='daily'):
-            quote = get_quote()
-            await message.channel.send(quote)
+          quote = get_quote()
+          await message.channel.send(quote)
 
         if (msg=='af' or msg=='fact'):
-            fact = get_fact()
-            await message.channel.send(fact)
+          fact = get_fact()
+          await message.channel.send(fact)
 
         if (msg=='joke'):
-            joke = get_joke()
-            await message.channel.send(joke)
+          joke = get_joke()
+          await message.channel.send(joke)
+        if (msg=='msg'):
+          await message.channel.send('Hey <@'+ (str)(message.author.id) + '>, you have sent ' + (str)(db[(str)(message.author.id)]) + ' messages!')
     
 
 keep_alive()
