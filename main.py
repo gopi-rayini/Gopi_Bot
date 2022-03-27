@@ -5,7 +5,7 @@ import requests
 from replit import db
 from keep_alive import keep_alive
 from time import sleep
- from datetime import datetime
+from datetime import datetime
 
 intents = discord.Intents.default()
 intents.members = True
@@ -13,28 +13,31 @@ client = discord.Client(intents=intents)
 guild=client.guilds
 prefix='$'
 
+# # # API Methods
+
 def get_quote():
-    response = requests.get("https://zenquotes.io/api/random")
-    json_data = json.loads(response.text)
-    quote = json_data[0]['q'] + " -" + json_data[0]['a']
-    return(quote)
+  response = requests.get("https://zenquotes.io/api/random")
+  json_data = json.loads(response.text)
+  quote = json_data[0]['q'] + " -" + json_data[0]['a']
+  return(quote)
 
 def get_fact():
-    response = requests.get("https://animechan.vercel.app/api/random")
-    json_data = json.loads(response.text)
-    fact = json_data['quote'] + " -**" + json_data['character'] + '**, *' + json_data['anime'] + '*'
-    return (fact)
+  response = requests.get("https://animechan.vercel.app/api/random")
+  json_data = json.loads(response.text)
+  fact = json_data['quote'] + " -**" + json_data['character'] + '**, *' + json_data['anime'] + '*'
+  return (fact)
 
 def get_joke():
-    r = requests.get("https://v2.jokeapi.dev/joke/Any")
-    j = json.loads(r.text)
-    joketype = j['type']
-    if(joketype=='twopart'):
-        joke = j['setup'] + '  **' + j['delivery'] + '**'
-    else:
-        joke = j['joke']
-    return joke
+  r = requests.get("https://v2.jokeapi.dev/joke/Any")
+  j = json.loads(r.text)
+  joketype = j['type']
+  if(joketype=='twopart'):
+      joke = j['setup'] + '  **' + j['delivery'] + '**'
+  else:
+      joke = j['joke']
+  return joke
 
+# Weather Methods
 def get_weather(info):
   #API Call
   r = requests.get("https://www.7timer.info/bin/civil.php?lon=-74.44&lat=40.36&ac=0&unit=british&output=json&tzshift=0")
@@ -61,40 +64,40 @@ def get_weather(info):
     return weather
 
   if(info=="precip"):
-      prec = []
-      for x in series:
-        if(x['prec_type'] is not None):
-          prec.append(x['prec_type'])
-      return prec
+    prec = []
+    for x in series:
+      if(x['prec_type'] is not None):
+        prec.append(x['prec_type'])
+    return prec
 
   if(info=="init"):
     init = ((int)(j['init']))%100
     return (init-4)
 
 def update_prefix(char):
-    db["prefix"] = char
+  db["prefix"] = char
 
 def checkName(msg):
-    if (msg==('joe' or 'Joe')):
-      return('**Joe** is a fantastic gamer. Just needs to work on communication, aim, map awareness, crosshair placement, economy management, pistol aim, awp flicks, grenade spots, smoke spots, pop flashes, positioning, bomb plant positions, retake ability, bunny hopping, spray control and getting a kill.')
+  if (msg==('joe' or 'Joe')):
+    return('**Joe** is a fantastic gamer. Just needs to work on communication, aim, map awareness, crosshair placement, economy management, pistol aim, awp flicks, grenade spots, smoke spots, pop flashes, positioning, bomb plant positions, retake ability, bunny hopping, spray control and getting a kill.')
 
-    if (msg==('raven' or 'Raven')):
-      return('**Raven**: I am loli maid with cat ears. Smol, cute, and very smol. Am like 3ft 4in. Anyways, give me headpats')
+  if (msg==('raven' or 'Raven')):
+    return('**Raven**: I am loli maid with cat ears. Smol, cute, and very smol. Am like 3ft 4in. Anyways, give me headpats')
 
-    if (msg==('gopi' or "Gopi")):
-      return("**Gopi** : I'm the owner of this bot, bitch")
+  if (msg==('gopi' or "Gopi")):
+    return("**Gopi** : I'm the owner of this bot, bitch")
 
-    if (msg==('xinyi' or 'Xinyi')):
-      return("**Xinyi**: 我有最大的阴茎")
+  if (msg==('xinyi' or 'Xinyi')):
+    return("**Xinyi**: 我有最大的阴茎")
 
-    if (msg==('justin' or 'Justin' or 'jj')):
-      return("**JJSLAYIN**: I only play games that require 3000+ hours to get 1 item.")
+  if (msg==('justin' or 'Justin' or 'jj')):
+    return("**JJSLAYIN**: I only play games that require 3000+ hours to get 1 item.")
 
-    if (msg==('ariana' or 'Ariana')):
-      return("**Ariana**: I am Ariana Pequeno.")
+  if (msg==('ariana' or 'Ariana')):
+    return("**Ariana**: I am Ariana Pequeno.")
 
-    else:
-      return "NA"   
+  else:
+    return "NA"   
 
 
 @client.event
@@ -104,10 +107,15 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+
+  # Get Message + Prefix
   prefix = db["prefix"]
   msg=message.content
+
+  # Don't read bot's own messages
   if message.author == client.user:
     return
+
   # User Message Counter
   try:
     db[(str)(message.author.id)] += 1
@@ -123,7 +131,6 @@ async def on_message(message):
   if message.content.startswith(prefix):
     # Parse command only without prefix
     msg = message.content.replace(prefix, '', 1)
-
 
     # Run Commands
     if (msg=='help'):            
@@ -169,6 +176,11 @@ async def on_message(message):
           text = text + '\n\n' + "<<< ----- Next Day ----- >>>"
           text = text + '\n' + "{:<15} {:<15} {:<15}".format("Hour", "Temp (F)", "Condition")
       await message.channel.send(text + "```")
+
+    if(msg=='event'):
+      split = msg.split(' ')
+      await message.channel.send(split)
+
 
 # Server Aliving
 
