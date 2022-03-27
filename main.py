@@ -77,6 +77,11 @@ def get_weather(info):
 def update_prefix(char):
   db["prefix"] = char
 
+def add_name(name):
+    namelist = db["name"]
+    namelist.append(name)
+    db["name"] = namelist
+
 def checkName(msg):
   if (msg==('joe' or 'Joe')):
     return('**Joe** is a fantastic gamer. Just needs to work on communication, aim, map awareness, crosshair placement, economy management, pistol aim, awp flicks, grenade spots, smoke spots, pop flashes, positioning, bomb plant positions, retake ability, bunny hopping, spray control and getting a kill.')
@@ -102,7 +107,7 @@ def checkName(msg):
 
 @client.event
 async def on_ready():
-  await client.change_presence(activity=discord.Game('your mother'))
+  await client.change_presence(activity=discord.Game('gently ;)'))
   print('We have logged in as {0.user}'.format(client))
 
 @client.event
@@ -166,10 +171,8 @@ async def on_message(message):
       weather = get_weather("weather")
       text = '```' + "--- Start Date - " + date + " ---"
       text = text + '\n' + "{:<15} {:<15} {:<15}".format("Hour", "Temp (F)", "Condition")
-      for x in range(0,(int)(len(temp)/4)):
-        d = datetime.strptime((str)(hour)+":00", "%H:%M")
-        d.strftime("%I:%M %p")        
-        text = text + '\n' + "{:<15} {:<15} {:<15}".format( d, (str)(temp[x]), (str)(weather[x]))
+      for x in range(0,(int)(len(temp)/4)):        
+        text = text + '\n' + "{:<15} {:<15} {:<15}".format( (str)(hour), (str)(temp[x]), (str)(weather[x]))
         hour+=3
         if(hour>24):
           hour-=24
