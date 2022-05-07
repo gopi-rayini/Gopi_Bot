@@ -37,6 +37,12 @@ def get_joke():
       joke = j['joke']
   return joke
 
+def cf():
+  r = requests.get("https://catfact.ninja/fact")
+  j = json.loads(r.text)
+  return j["fact"]
+
+
 # Weather Methods
 def get_weather(info):
   #API Call
@@ -162,6 +168,9 @@ async def on_message(message):
     if (msg=='joke'):
       joke = get_joke()
       await message.channel.send(joke)
+
+    if (msg=='cf' or msg=='catfact'):
+      await message.channel.send(cf())
     
     if(msg=='forecast'):
       date = get_weather("date")
@@ -170,14 +179,16 @@ async def on_message(message):
       hour = init + 3
       weather = get_weather("weather")
       text = '```' + "--- Start Date - " + date + " ---"
-      text = text + '\n' + "{:<15} {:<15} {:<15}".format("Hour", "Temp (F)", "Condition")
-      for x in range(0,(int)(len(temp)/4)):        
-        text = text + '\n' + "{:<15} {:<15} {:<15}".format( (str)(hour), (str)(temp[x]), (str)(weather[x]))
+      text = text + '\n' + "{:<30} {:<15} {:<30}".format("Hour", "Temp (F)", "Condition")
+      for x in range(0,(int)(len(temp)/4)):
+
+        text = text + '\n' + "{:<30} {:<15} {:<30}".format( (str)(hour), (str)(temp[x]), (str)(weather[x]))
+
         hour+=3
         if(hour>24):
           hour-=24
           text = text + '\n\n' + "<<< ----- Next Day ----- >>>"
-          text = text + '\n' + "{:<15} {:<15} {:<15}".format("Hour", "Temp (F)", "Condition")
+          text = text + '\n' + "{:<30} {:<15} {:<30}".format("Hour", "Temp (F)", "Condition")
       await message.channel.send(text + "```")
 
     if(msg=='event'):
